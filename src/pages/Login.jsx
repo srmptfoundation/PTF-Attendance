@@ -41,7 +41,7 @@ const Login = () => {
             transition={{ duration: 0.5 }}
             className="logo-container"
           >
-            <img src="/logo/logo2.1.png" alt="PTF-Attendance" className="login-logo" />
+            <img src="/logo.png" alt="PTF-Attendance" className="login-logo" />
           </motion.div>
           <h2 className="gradient-text">PTF-Attendance</h2>
           <p>Seamless Student Management & Attendance Tracking</p>
