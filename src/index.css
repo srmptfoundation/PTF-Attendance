@@ -109,7 +109,7 @@ h1, h2, h3 {
 
 .main-content {
   flex: 1;
-  padding: 2rem;
+  padding: 2.5rem;
   margin-left: var(--sidebar-width);
   transition: var(--transition);
 }

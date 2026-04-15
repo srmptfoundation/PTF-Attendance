@@ -114,9 +114,17 @@ const Layout = ({ children }) => {
 
         .sidebar-header {
           display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 3rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+          margin-bottom: 3.5rem;
+        }
+
+        .sidebar-header h2 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          letter-spacing: -0.01em;
         }
 
         .sidebar-logo {
