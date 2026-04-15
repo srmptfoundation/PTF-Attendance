@@ -108,15 +108,7 @@ const Students = () => {
 
   const { data: students, isLoading } = useQuery({
     queryKey: ['students'],
-    queryFn: () => StudentService.getAll().then(res => {
-      const yearOrder = { '1st Year': 1, '2nd Year': 2, '3rd Year': 3, '4th Year': 4 };
-      return res.data.sort((a, b) => {
-        const yearA = yearOrder[a.year] || 99;
-        const yearB = yearOrder[b.year] || 99;
-        if (yearA !== yearB) return yearA - yearB;
-        return a.full_name.localeCompare(b.full_name);
-      });
-    })
+    queryFn: () => StudentService.getAll().then(res => res.data)
   });
 
   const createMutation = useMutation({

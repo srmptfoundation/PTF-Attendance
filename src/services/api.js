@@ -11,7 +11,7 @@ export const StudentService = {
     const { data, error } = await supabase
       .from('students')
       .select('*')
-      .order('full_name', { ascending: true });
+      .order('s_no', { ascending: true });
     if (error) throw error;
     return formatResponse(data);
   },
@@ -131,7 +131,8 @@ export const ReportService = {
 
     const { data: students, error: studentError } = await supabase
       .from('students')
-      .select('id, full_name, class');
+      .select('id, full_name, class, s_no')
+      .order('s_no', { ascending: true });
     if (studentError) throw studentError;
 
     const { data: attendance, error: attendanceError } = await supabase
@@ -169,7 +170,8 @@ export const ReportService = {
 
     const { data: students, error: studentError } = await supabase
       .from('students')
-      .select('id, full_name, class, department');
+      .select('id, full_name, class, department, s_no')
+      .order('s_no', { ascending: true });
     if (studentError) throw studentError;
 
     const { data: attendance, error: attendanceError } = await supabase

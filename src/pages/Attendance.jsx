@@ -20,15 +20,7 @@ const Attendance = () => {
   // Fetch students
   const { data: students, isLoading: loadingStudents } = useQuery({
     queryKey: ['students'],
-    queryFn: () => StudentService.getAll().then(res => {
-      const yearOrder = { '1st Year': 1, '2nd Year': 2, '3rd Year': 3, '4th Year': 4 };
-      return res.data.sort((a, b) => {
-        const yearA = yearOrder[a.year] || 99;
-        const yearB = yearOrder[b.year] || 99;
-        if (yearA !== yearB) return yearA - yearB;
-        return a.full_name.localeCompare(b.full_name);
-      });
-    })
+    queryFn: () => StudentService.getAll().then(res => res.data)
   });
 
   // Fetch existing attendance for this date

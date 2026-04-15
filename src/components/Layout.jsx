@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
     <div className="app-container">
       <aside className="sidebar glass">
         <div className="sidebar-header">
-          <img src="/logo/logo1-removebg-preview.png" alt="PTF" className="sidebar-logo" />
+          <img src="/logo.png" alt="PTF" className="sidebar-logo" />
           <h2>PTF Attendance</h2>
         </div>
 
