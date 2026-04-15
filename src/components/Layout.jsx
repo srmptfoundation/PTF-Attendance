@@ -120,8 +120,8 @@ const Layout = ({ children }) => {
         }
 
         .sidebar-logo {
-          width: 40px;
-          height: 40px;
+          width: 120px;
+          height: auto;
           object-fit: contain;
           filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.1));
         }
