@@ -121,6 +121,16 @@ h1, h2, h3 {
   }
 }
 
+@media (max-width: 480px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

@@ -49,29 +49,33 @@ const InchargeDashboard = () => {
 
   return (
     <div className="dashboard-page">
+      <div className="session-label">
+        {summary?.activeSession === 'morning' ? 'Morning Session' : 'Afternoon Session'}
+      </div>
+
       <div className="stats-grid">
-        <StatCard 
-          title="Total Students" 
-          value={summary?.totalStudents || 0} 
-          icon={Users} 
+        <StatCard
+          title="Total Students"
+          value={summary?.totalStudents || 0}
+          icon={Users}
           color="#38bdf8"
         />
-        <StatCard 
-          title="Present Today" 
-          value={summary?.presentToday || 0} 
-          icon={CheckCircle2} 
+        <StatCard
+          title="Present Today"
+          value={summary?.presentToday || 0}
+          icon={CheckCircle2}
           color="#4ade80"
         />
-        <StatCard 
-          title="Absent Today" 
-          value={summary?.absentToday || 0} 
-          icon={XCircle} 
+        <StatCard
+          title="Absent Today"
+          value={summary?.absentToday || 0}
+          icon={XCircle}
           color="#f87171"
         />
-        <StatCard 
-          title="Permission" 
-          value={summary?.permissionToday || 0} 
-          icon={Clock} 
+        <StatCard
+          title="Permission"
+          value={summary?.permissionToday || 0}
+          icon={Clock}
           color="#fbbf24"
         />
       </div>
@@ -99,8 +103,9 @@ const InchargeDashboard = () => {
                   <div className={`activity-dot ${activity.status}`}></div>
                   <div className="activity-info">
                     <p className="activity-text">
-                      <strong>{activity.students?.full_name}</strong> was marked 
+                      <strong>{activity.students?.full_name}</strong> was marked
                       <span className={`status-text ${activity.status}`}> {activity.status}</span>
+                      <span className="activity-session"> · {activity.session}</span>
                     </p>
                     <p className="activity-time">{format(new Date(activity.date), 'MMMM dd, yyyy')}</p>
                   </div>
@@ -121,6 +126,15 @@ const InchargeDashboard = () => {
           display: flex;
           flex-direction: column;
           gap: 2rem;
+        }
+
+        .session-label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--primary-color);
+          margin-bottom: -0.5rem;
         }
 
         .stats-grid {
@@ -249,6 +263,11 @@ const InchargeDashboard = () => {
           margin-top: 0.25rem;
         }
 
+        .activity-session {
+          color: var(--text-secondary);
+          font-size: 0.85rem;
+        }
+
         .dashboard-loading, .dashboard-error {
           height: 60vh;
           display: flex;
@@ -257,6 +276,19 @@ const InchargeDashboard = () => {
           justify-content: center;
           gap: 1.5rem;
           text-align: center;
+        }
+
+        @media (max-width: 640px) {
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+          }
+          .stat-value {
+            font-size: 1.4rem;
+          }
+          .stat-card {
+            padding: 1rem;
+          }
         }
       `}} />
     </div>

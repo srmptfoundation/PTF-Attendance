@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { StudentService } from '../services/api';
 import { 
@@ -7,7 +7,6 @@ import {
   Edit2, 
   Trash2, 
   Filter,
-  MoreVertical,
   X,
   Users
 } from 'lucide-react';
@@ -431,6 +430,53 @@ const Students = () => {
           justify-content: flex-end;
           gap: 1rem;
           margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+          .action-bar {
+            flex-wrap: wrap;
+          }
+          .search-box {
+            max-width: 100%;
+            flex: 1 1 auto;
+            min-width: 0;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .data-table th:nth-child(2),
+          .data-table th:nth-child(4),
+          .data-table th:nth-child(5),
+          .data-table td:nth-child(2),
+          .data-table td:nth-child(4),
+          .data-table td:nth-child(5) {
+            display: none;
+          }
+
+          .data-table th,
+          .data-table td {
+            padding: 0.75rem;
+          }
+
+          .modal-overlay {
+            padding: 0;
+            align-items: flex-end;
+          }
+
+          .modal-content {
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+          }
+
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .input-field.full-width {
+            grid-column: span 1;
+          }
         }
       `}} />
     </div>

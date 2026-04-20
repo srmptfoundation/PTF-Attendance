@@ -1,19 +1,20 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  BarChart3, 
-  Users, 
+import {
+  BarChart3,
+  Users,
   CheckSquare,
-  FileText, 
-  LogOut, 
-  User, 
-  Settings 
+  FileText,
+  LogOut,
+  Settings,
+  Menu
 } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 
-const SidebarLink = ({ to, icon: Icon, label, active }) => (
-  <Link 
-    to={to} 
+const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
+  <Link
+    to={to}
+    onClick={onClick}
     className={`sidebar-link ${active ? 'active' : ''}`}
   >
     <Icon size={20} />
@@ -25,46 +26,55 @@ const Layout = ({ children }) => {
   const { user, signOut, role } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
     navigate('/login');
   };
 
+  const closeSidebar = () => setMobileOpen(false);
+
   return (
     <div className="app-container">
-      <aside className="sidebar glass">
+      {mobileOpen && <div className="mobile-overlay" onClick={closeSidebar} />}
+
+      <aside className={`sidebar glass ${mobileOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-header">
           <img src="/logo.png" alt="PTF" className="sidebar-logo" />
           <h2>PTF Attendance</h2>
         </div>
 
         <nav className="sidebar-nav">
-          <SidebarLink 
-            to="/" 
-            icon={BarChart3} 
-            label="Dashboard" 
-            active={location.pathname === '/'} 
+          <SidebarLink
+            to="/"
+            icon={BarChart3}
+            label="Dashboard"
+            active={location.pathname === '/'}
+            onClick={closeSidebar}
           />
           {role !== 'admin' && (
-            <SidebarLink 
-              to="/attendance" 
-              icon={CheckSquare} 
-              label="Attendance" 
-              active={location.pathname === '/attendance'} 
+            <SidebarLink
+              to="/attendance"
+              icon={CheckSquare}
+              label="Attendance"
+              active={location.pathname === '/attendance'}
+              onClick={closeSidebar}
             />
           )}
-          <SidebarLink 
-            to="/students" 
-            icon={Users} 
-            label="Students" 
-            active={location.pathname === '/students'} 
+          <SidebarLink
+            to="/students"
+            icon={Users}
+            label="Students"
+            active={location.pathname === '/students'}
+            onClick={closeSidebar}
           />
-          <SidebarLink 
-            to="/reports" 
-            icon={FileText} 
-            label="Reports" 
-            active={location.pathname === '/reports'} 
+          <SidebarLink
+            to="/reports"
+            icon={FileText}
+            label="Reports"
+            active={location.pathname === '/reports'}
+            onClick={closeSidebar}
           />
         </nav>
 
@@ -87,7 +97,12 @@ const Layout = ({ children }) => {
 
       <main className="main-content animate-fade-in">
         <header className="content-top">
-          <h1>{getPageTitle(location.pathname)}</h1>
+          <div className="content-top-left">
+            <button className="menu-toggle" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
+              <Menu size={22} />
+            </button>
+            <h1>{getPageTitle(location.pathname)}</h1>
+          </div>
           <div className="top-actions">
             <button className="btn-ghost icon-only"><Settings size={20} /></button>
           </div>
@@ -105,11 +120,68 @@ const Layout = ({ children }) => {
           display: flex;
           flex-direction: column;
           padding: 1.5rem;
-          z-index: 100;
+          z-index: 200;
           border-radius: 0;
           border-left: none;
           border-top: none;
           border-bottom: none;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-toggle {
+          display: none;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+          padding: 0.5rem;
+          min-width: 44px;
+          min-height: 44px;
+          border-radius: var(--radius-md);
+          transition: var(--transition);
+          flex-shrink: 0;
+        }
+
+        .menu-toggle:hover {
+          background: var(--glass-bg);
+        }
+
+        .content-top-left {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          min-width: 0;
+        }
+
+        .content-top-left h1 {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        @media (max-width: 1024px) {
+          .sidebar {
+            transform: translateX(-100%);
+          }
+
+          .sidebar.mobile-open {
+            transform: translateX(0);
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.4);
+          }
+
+          .menu-toggle {
+            display: flex;
+          }
+        }
+
+        .mobile-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(2px);
+          z-index: 150;
         }
 
         .sidebar-header {
@@ -150,6 +222,7 @@ const Layout = ({ children }) => {
           color: var(--text-secondary);
           text-decoration: none;
           transition: var(--transition);
+          min-height: 48px;
         }
 
         .sidebar-link:hover, .sidebar-link.active {
@@ -174,6 +247,7 @@ const Layout = ({ children }) => {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+          overflow: hidden;
         }
 
         .avatar {
@@ -183,11 +257,15 @@ const Layout = ({ children }) => {
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
         }
 
         .user-name {
           font-weight: 500;
           font-size: 0.9rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .user-role {
@@ -206,6 +284,7 @@ const Layout = ({ children }) => {
           cursor: pointer;
           font-size: 0.9rem;
           padding: 0.5rem;
+          min-height: 44px;
           transition: var(--transition);
         }
 
@@ -219,11 +298,23 @@ const Layout = ({ children }) => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 2rem;
+          gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+          .content-top h1 {
+            font-size: 1.2rem;
+          }
         }
 
         .icon-only {
           padding: 0.5rem;
           border-radius: 50%;
+          min-width: 44px;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       `}} />
     </div>

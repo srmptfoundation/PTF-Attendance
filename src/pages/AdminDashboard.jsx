@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { StudentService, AttendanceService } from '../services/api';
 import { 
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const { role } = useAuthStore();
   const isAdmin = role === 'admin';
   const [date, setDate] = useState(new Date());
+  const [session, setSession] = useState('morning');
   const [attendanceMap, setAttendanceMap] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -38,10 +39,10 @@ const Dashboard = () => {
     queryFn: () => StudentService.getAll().then(res => res.data)
   });
 
-  // Fetch existing attendance for this date
+  // Fetch existing attendance for this date + session
   const { data: existingAttendance, isLoading: loadingAttendance } = useQuery({
-    queryKey: ['attendance', formattedDate],
-    queryFn: () => AttendanceService.getByDate(formattedDate).then(res => res.data),
+    queryKey: ['attendance', formattedDate, session],
+    queryFn: () => AttendanceService.getByDate(formattedDate, session).then(res => res.data),
     enabled: !!students
   });
 
@@ -59,7 +60,7 @@ const Dashboard = () => {
   }, [existingAttendance]);
 
   const mutation = useMutation({
-    mutationFn: (data) => AttendanceService.mark(data),
+    mutationFn: ({ attendanceData, session }) => AttendanceService.mark(attendanceData, session),
     onSuccess: () => {
       setIsSaving(false);
       alert('Attendance saved successfully!');
@@ -82,9 +83,9 @@ const Dashboard = () => {
     const attendanceData = students.map(s => ({
       student_id: s.id,
       date: formattedDate,
-      status: attendanceMap[s.id] || 'absent' // Default to absent if not marked
+      status: attendanceMap[s.id] || 'absent'
     }));
-    mutation.mutate(attendanceData);
+    mutation.mutate({ attendanceData, session });
   };
 
   const markAll = (status) => {
@@ -113,6 +114,21 @@ const Dashboard = () => {
             <span>{format(date, 'MMMM dd, yyyy')}</span>
           </div>
           <button onClick={() => setDate(addDays(date, 1))} className="btn-icon"><ChevronRight size={20} /></button>
+        </div>
+
+        <div className="session-toggle glass">
+          <button
+            className={`session-btn ${session === 'morning' ? 'active' : ''}`}
+            onClick={() => setSession('morning')}
+          >
+            Morning
+          </button>
+          <button
+            className={`session-btn ${session === 'afternoon' ? 'active' : ''}`}
+            onClick={() => setSession('afternoon')}
+          >
+            Afternoon
+          </button>
         </div>
 
         <div className="header-actions">
@@ -266,12 +282,43 @@ const Dashboard = () => {
           justify-content: space-between;
           align-items: center;
           gap: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .session-toggle {
+          display: flex;
+          padding: 0.25rem;
+          gap: 0.25rem;
+          border-radius: var(--radius-md);
+        }
+
+        .session-btn {
+          padding: 0.5rem 1.25rem;
+          border-radius: calc(var(--radius-md) - 2px);
+          border: none;
+          background: transparent;
+          color: var(--text-secondary);
+          cursor: pointer;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: var(--transition);
+          font-family: 'Outfit', sans-serif;
+        }
+
+        .session-btn.active {
+          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          color: white;
+        }
+
+        .session-btn:not(.active):hover {
+          background: var(--glass-bg);
+          color: var(--text-primary);
         }
 
         .date-selector {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          justify-content: space-between;
           padding: 0.5rem 1rem;
           border-radius: var(--radius-md);
         }
@@ -282,7 +329,6 @@ const Dashboard = () => {
           gap: 0.5rem;
           font-weight: 500;
           color: var(--primary-color);
-          min-width: 180px;
           justify-content: center;
         }
 
@@ -405,6 +451,91 @@ const Dashboard = () => {
           padding: 0.25rem 0.75rem;
           border-radius: 20px;
           font-size: 0.8rem;
+        }
+
+        @media (max-width: 640px) {
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+          }
+          .stat-value {
+            font-size: 1.4rem;
+          }
+          .stat-card {
+            padding: 1rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .attendance-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
+          .date-selector, .session-toggle {
+            width: 100%;
+          }
+          .session-btn {
+            flex: 1;
+            text-align: center;
+          }
+          .header-actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .bulk-actions {
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .attendance-table thead {
+            display: none;
+          }
+
+          .attendance-table tr {
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem 1rem;
+            gap: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+          }
+
+          .attendance-table td {
+            padding: 0;
+            border: none;
+            width: 100%;
+          }
+
+          .attendance-table th:nth-child(2),
+          .attendance-table th:nth-child(3),
+          .attendance-table td:nth-child(2),
+          .attendance-table td:nth-child(3) {
+            display: none;
+          }
+
+          .status-toggle-group {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+          }
+
+          .status-btn {
+            padding: 0.75rem 0;
+            font-size: 0;
+            min-height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .status-btn svg {
+            width: 22px;
+            height: 22px;
+            margin: 0;
+          }
         }
       `}} />
     </div>

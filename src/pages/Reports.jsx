@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ReportService } from '../services/api';
 import { 
   Download, 
@@ -317,6 +317,49 @@ const Reports = () => {
 
         .modal-header h2 {
           font-size: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+          .reports-hero {
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 0;
+          }
+
+          .hero-illustration {
+            display: none;
+          }
+
+          .hero-content {
+            max-width: 100%;
+          }
+
+          .hero-content h2 {
+            font-size: 1.4rem;
+          }
+
+          .report-config {
+            flex-direction: column;
+            gap: 1rem;
+          }
+
+          .config-item select {
+            min-width: unset;
+            width: 100%;
+          }
+
+          .export-btn {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .modal-overlay {
+            padding: 1rem;
+          }
+
+          .modal-content {
+            max-height: 85vh;
+          }
         }
       `}} />
     </div>
